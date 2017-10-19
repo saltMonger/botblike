@@ -1,3 +1,4 @@
+import ROT from './rot.js';
 import Enemy from "./actors/enemy.js"; //TODO: Start stubbing this out
 
 //CURRENT OVERHAUL GOING ON:
@@ -135,7 +136,10 @@ export default class Map{
 
         //the map should be finished loading, draw the whole map to finish up.
         this._drawWholeMap();
+<<<<<<< HEAD
         this._drawAllEntities();
+=======
+>>>>>>> Add all content from original gamejam version and refactor
     }
 
     //Save Map

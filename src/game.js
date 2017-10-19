@@ -1,3 +1,4 @@
+import ROT from './rot.js';
 import Map from "./map.js";
 import Inventory from "./actors/containers/inventory.js";
 import Equipment from "./actors/containers/equipment.js";
@@ -15,8 +16,8 @@ var Game = {
 
 	init: function() {
 		//init engine
-		console.log("hey");
 		this.display = new ROT.Display();
+		console.log(this.display._options.height);
 		//console.log(this.display);
 		this.map = new Map(this);
 		this.ui = new UI(0,this.display._options.height - this.clogHeight, this.display._options.width, this.clogHeight);
@@ -35,8 +36,8 @@ var Game = {
 		}
 
 		//bad practice, whatever
-		createjs.Sound.registerSound("music/MootBooxle_RogueLoop_A.ogg",this.sounds.music1);
-		createjs.Sound.registerSound("music/MootBooxle_RogueLoop_B.ogg",this.sounds.music2);
+		 createjs.Sound.registerSound("music/MootBooxle_RogueLoop_A.ogg",this.sounds.music1);
+		 createjs.Sound.registerSound("music/MootBooxle_RogueLoop_B.ogg",this.sounds.music2);
 
 		//need a create player call here VVVV
 
@@ -394,8 +395,6 @@ class Player extends Actor{
 	getY(){
 		return this._y;
 	}
-
-
 
 	//Initializations
 	generateStatBlockFirstTime(){
@@ -1987,10 +1986,4 @@ class displayStats{
 	}
 }
 
-
-//EXTREMELY NECESSARY
-export class loader {
-	run(){
-		Game.init();
-	}
-}
+Game.init();
