@@ -440,10 +440,6 @@ class Player extends Actor{
 		//CON -> knight
 		//INT -> wizard
 		//WIS -> sage
-
-
-		//possible debug?
-		this.firstTurn = true;
 	}
 
 	//REQUIRED
@@ -503,17 +499,8 @@ class Player extends Actor{
 
 
 	act(){
-		//draw everything here?
-		//need to wait a single turn...
-		if(!this.firstTurn){
-			//going to definitely need changed
 			Game.map._drawWholeMap();
 			Game.map._drawAllEntities();
-		}
-		else{
-			this.firstTurn = false;
-		}
-
 		Game.engine.lock();
 		window.addEventListener("keydown", this);
 	}

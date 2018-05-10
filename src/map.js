@@ -135,6 +135,7 @@ export default class Map{
 
         //the map should be finished loading, draw the whole map to finish up.
         this._drawWholeMap();
+        this._drawAllEntities();
     }
 
     //Save Map
