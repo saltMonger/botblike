@@ -1,3 +1,4 @@
+import ROT from './rot.js';
 import Enemy from "./actors/enemy.js"; //TODO: Start stubbing this out
 
 //CURRENT OVERHAUL GOING ON:

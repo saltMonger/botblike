@@ -1,7 +1,2 @@
 # ignore folders
 node_modules/
-music/
-
-# ignore build files
-dist/bundle.js
-
