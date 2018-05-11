@@ -10,20 +10,18 @@ export default class Inventory {
 
 	
 	addItem(item){
-		//console.log(item);
 		this.contents.push(item);
 		this.weight += item._weight;
 	}
 
 	removeItem(item){
-		//console.log(item);
 		var index = this.contents.indexOf(item);
 		this.contents.splice(index, 1); //drop from item array
 		this.weight -= item._weight;
 	}
 
 	equipItem(item){
-		var ty = item.constructor.name;  //should be WEAP or ARMOR or something
+		var ty = item.constructor.name;
 		if(ty === "Weapon"){
 			this.target.equipment.equip("weap", item);
 		}
@@ -44,7 +42,7 @@ export default class Inventory {
 					this.contents.push(food);
 					this.weight += food._weight;
 					break;
-				default: //console.log("failed to load item: invalid type definition!");
+				default:
 					break;
 			}
 		});

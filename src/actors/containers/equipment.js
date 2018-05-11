@@ -10,7 +10,6 @@ export default class Equipment{
 	//recalculates stats
 	equip(type,item){
 		if(type === "weap"){
-			//console.log("inside equipment");
 			this.target.inventory.addItem(this.weapon);
 			this.weapon = null;
 			this.weapon = item;

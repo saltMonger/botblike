@@ -17,9 +17,9 @@ export default class Enemy extends Actor{
 		this.Game = gameRef;
 
 		//generate loot
-
 		this.isDead = false;
 		this.onFloor = this.Game.map.floor;
+
 		//DEBUG GEN STATS
 		if(this.name === "orc"){
 			this.STR = 5 + Math.floor(ROT.RNG.getUniform()*2);
@@ -77,7 +77,6 @@ export default class Enemy extends Actor{
 
 		this.scaleEnemy(this.Game.map.floor);
 		this.generateLoot();
-		//console.log(this);
 		this._draw();
 	}
 
@@ -118,8 +117,6 @@ export default class Enemy extends Actor{
 		else{
 			this.lootTable = 5;
 		}
-
-
 	}
 
 	generateLoot(){
@@ -167,9 +164,7 @@ export default class Enemy extends Actor{
 				}
 			}
 
-			//console.log(rItems);
 			var rand = ROT.RNG.getWeightedValue(rItems);
-			//console.log(rand);
 			var strng = this.Game.itemDefs.weapons[rand];
 			var spla = strng.split("/");
 			var statsa = spla[5].split(",");
@@ -232,24 +227,11 @@ export default class Enemy extends Actor{
 
 	act(){
 		//TODO: add pathfinding, AI, etc.
-		//console.log("inside of enemy act");
 		this.Game.engine.lock();
 		var x = this.target.getX();
 		var y = this.target.getY();
 
 		var passableCallback = function(x,y){
-			// this.x = x; //some garbage work around stuff
-			// this.y = y; 
-			// if(!(Game.monstersAlive.every(function(value){
-			// 	if(this.x === value._x && this.y === value._y){
-			// 		return false;
-			// 	}
-			// 	else{
-			// 		return true;
-			// 	}
-			// }.bind(this)))){
-			// 	return false;
-			// }
 			return(this.Game.map.currMap[x+","+y] !== "#" && this.Game.map.currMap[x+","+y] !== " ");
 		}
 
@@ -261,24 +243,15 @@ export default class Enemy extends Actor{
 		astar.compute(this._x, this._y, pathCallback);
 
 		path.shift(); //removes enemy's current position
-		//console.log("path length: " + path.length);
-		//var d = dist(this._x,this._y,x,y);
 		if(path.length <= 1){
 			this.fight();
 		}
 		else if(path.length < 7){ //this value needs tweaked
-			//console.log("path: " + path);
 			x = path[0][0];
 			y = path[0][1];
-			//this.Game.display.draw(this._x, this._y, this.Game.map[this._x+","+this._y]);
 			this._x  = x;
 			this._y = y;
-			//this._draw();
 		}
-		// this.Game.map._drawWholeMap();
-		// this.Game.map._drawAllEntities();
-
-		//else, just stall
 		this.Game.engine.unlock();
 	}
 
@@ -286,13 +259,10 @@ export default class Enemy extends Actor{
 	fight(){
 		//general fighting action
 		var dmgOutput = parseInt(this.ATK + 3); // FOR LATER: this.equipment.weapon.ATK;
-		//console.log("enemy fighting");
-		//console.log(this);
 		this.target.takeDamage(dmgOutput,"PHYS",this.name);
 	}
 
 	takeDamage(dmginput,type){
-		//console.log("enemy take damage");
 		var dmgtaken = 0;
 		var msg = "";
 		if(type === "PHYS"){
@@ -324,7 +294,6 @@ export default class Enemy extends Actor{
 		this.Game.scheduler.remove(this);
 		var ind = this.Game.map.monstersAlive.indexOf(this);
 		this.awardXP(this.XP);
-		//console.log(this.target);
 		if(ind > -1){
 			this.Game.map.monstersAlive.splice(ind,1); //toss the enemy out of the monstersAlive array.
 			console.log(this.inventory);
@@ -341,7 +310,6 @@ export default class Enemy extends Actor{
 			}
 		}
 		else{
-			//console.log("error checking inded!")
 		}
 		console.log(this);
 		
@@ -358,14 +326,5 @@ export default class Enemy extends Actor{
 	//that contains the monster's generated loot
 	//if that doesn't work, it searches for the nearest square to drop it.
 	dropLoot(){
-		//if(checkMapSquare()) is clear
-		//	generateTreasureContainer(this._x,this._y,this.monsterLoot[])
-		//else
-		//	key = findNearestSquare(this._x, this._y);
-		//	coords = key.split(',');
-		//	nx = coords[0];
-		//	ny = coords[1];
-		//	generateTreasureContainer(nx, ny, this.monsterLoot[]);
-		
 	}
 }

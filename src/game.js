@@ -18,16 +18,13 @@ var Game = {
 		//init engine
 		this.display = new ROT.Display();
 		console.log(this.display._options.height);
-		//console.log(this.display);
 		this.map = new Map(this);
 		this.ui = new UI(0,this.display._options.height - this.clogHeight, this.display._options.width, this.clogHeight);
-		//this.ui.clog(0,this.display._options.height - this.clogHeight, this.display._options.width,this.clogHeight);
 		this.ui.updateClog("Welcome to botblike! You're the yellow @, arrow keys to move.", "yellow");
 	
 		document.body.appendChild(this.display.getContainer());
 
 		this._setItemDefinitions();
-
 
 		//sound init
 		this.sounds = {
@@ -39,8 +36,6 @@ var Game = {
 		 createjs.Sound.registerSound("music/MootBooxle_RogueLoop_A.ogg",this.sounds.music1);
 		 createjs.Sound.registerSound("music/MootBooxle_RogueLoop_B.ogg",this.sounds.music2);
 
-		//need a create player call here VVVV
-
 		//generate map and place players
 		var nKey = ["0,0"];
 		this._createPlayer(nKey);
@@ -49,32 +44,18 @@ var Game = {
 
 		//maybe need some control for map depth
 		this.map._generateMap(30);
-		//do the generate here, should be good.
 
 		this.scheduler.add(this.player, true);
-		// //DEBUG
-		// for(var i=0; i<this.monstersAlive.length; i++){
-		// 	this.scheduler.add(this.monstersAlive[i], true);
-		// }
-		
 
 		this.engine = new ROT.Engine(this.scheduler);
 		this.engine.start();
 
-		        //load the map for the first time
+		//load the map for the first time
         this.map._loadMap(this.map.floor);
 		
 		this.ui.repaintClog();
 	}
 }
-
-// var dist = function(x1,y1,x2,y2){
-// 	var a = Math.pow(x2 - x1, 2);
-// 	var b = Math.pow(y2 - y1, 2);
-// 	var c = Math.sqrt(a + b);
-// 	//console.log(c);
-// 	return c;
-// }
 
 //DECLARE ENGINE VARS ETC.
 Game.player = null;
@@ -88,51 +69,7 @@ Game.itemDefs = null;
 Game._setItemDefinitions = function(){
 	this.itemDefs = new ItemDefinitions("r");
 }
-// Game._generateMap = function() {
-// 	//console.log(this.display);
-// 	var digger = new ROT.Map.Digger(this.display._options.width, this.display._options.height - this.clogHeight);
-// 	var freeCells = [];
 
-
-// 	//PROBABLY A BAD WAY TO DO THIS
-// 	setTimeout(function(){
-// 	//console.log("loading music...");
-	
-// 	var rSounds = {
-// 		"music1": 1,
-// 		"music2": 1
-// 	}
-// 	var ran = ROT.RNG.getWeightedValue(rSounds);
-// 	//console.log(ran);
-// 	//console.log(this.sounds);
-// 	var instance = createjs.Sound.play(this.sounds[ran],"none",0,0,-1);
-// 	instance.volume = 1;
-// 	//console.log("this is the instance");
-// 	//console.log(instance);
-// 	}.bind(this), 7000);
-
-
-
-
-
-// 	var digCallback = function(x, y, value){
-// 		var key = x+ "," + y;
-// 		if(value) {
-// 			this.map[key] = "#";
-// 		}
-// 		else
-// 		{
-// 			this.map[key] = ".";
-// 			freeCells.push(key);
-// 		}
-// 	}
-// 	digger.create(digCallback.bind(this));
-// 	this._generateObstructions(freeCells);
-// 	Game._drawWholeMap();
-// 	this._createPlayer(freeCells);
-// 	//console.log(Game.player);
-// 	Game._generateRandomMonsters(Enemy, freeCells, Game.player);
-// }
 Game._restartGame = function(){
 	for(var i=0; i<this.map.monstersAlive.length; i++){
 		this.scheduler.remove(this.map.monstersAlive[i]);
@@ -144,111 +81,7 @@ Game._restartGame = function(){
 	Game._generateMap();
 
 }
-// Game._generateMapDeeper = function(){
-// 	if(this.floor  === 30){
-// 			var text = ["THOU HATH WON", "THANK THEE", "FOR PLAYING", "REFRESH BROWSER,", "KNIGHTLY SOUL"];
-// 			Game.ui.pmenu((Game.display._options.width / 2)-10, 6, 20, 12, "The end!", text);
-// 	}
 
-
-// 	for(var i=0; i<this.monstersAlive.length; i++){
-// 		this.scheduler.remove(this.monstersAlive[i]);
-// 	}
-// 	var digger = new ROT.Map.Digger(this.display._options.width, this.display._options.height - this.clogHeight);
-// 	var freeCells = [];
-
-// 	var rSounds = {
-// 		"music1": 1,
-// 		"music2": 1
-// 	}
-
-// 	if(this.floor % 10 === 0){
-// 		//console.log("loading music...");
-// 		var ran = ROT.RNG.getWeightedValue(rSounds);
-// 		//console.log(ran);
-
-// 		var instance = createjs.Sound.play(this.sounds[ran],"none",0,0,-1);
-// 		instance.volume = 1;
-// 		//console.log("this is the instance");
-// 		//console.log(instance);
-// 	}
-
-
-// 	//console.log("GENERATING DEEPER MAP");
-// 	//reset monster refs
-// 	this.monstersAlive = [];
-// 	this.coprses = [];
-// 	this.map = {}; // CLEAR MAP TOO HOLY SHIT
-// 	//reset monster refs
-	
-// 	var digCallback = function(x, y, value){
-// 		var key = x+ "," + y;
-// 		if(value) {
-// 			this.map[key] = "#";
-// 		}
-// 		else
-// 		{
-// 			this.map[key] = ".";
-// 			freeCells.push(key);
-// 		}
-// 	}
-
-// 	digger.create(digCallback.bind(this));
-// 	this._generateObstructions(freeCells);
-// 	Game._drawWholeMap();
-// 	this._placePlayer(freeCells);
-// 	Game._generateRandomMonsters(Enemy, freeCells, Game.player);
-// 	for(var i=0; i<this.monstersAlive.length; i++){
-// 		this.scheduler.add(this.monstersAlive[i], true);
-// 	}
-// 	//console.log(this.monstersAlive);
-// 	//console.log("floor:" + this.floor);
-// }
-// Game._drawWholeMap = function() {
-// 	for (var key in this.map) {
-// 		var parts = key.split(",");
-// 		var x = parseInt(parts[0]);
-// 		var y = parseInt(parts[1]);
-// 		if(this.map[key] === "#"){
-// 			var c = 0;
-// 			//TODO: Maybe make this better?
-// 			for(var i=-1;i<2;i++){
-// 				for(var j=-1;j<2;j++){
-// 					if(this.map[(x+i)+","+(y+j)]==="."){
-// 						c++;
-// 					}
-// 				}
-// 			}
-// 			if(c < 1){
-// 				this.display.draw(x,y," ");
-// 				continue;
-// 			}
-// 		}
-// 		if(this.map[key] === "#"){
-// 			this.display.draw(x, y, this.map[key], "#bbb");
-// 		}
-// 		else if(this.map[key] === "⚞"){
-// 			this.display.draw(x,y,this.map[key], "#f84");
-// 		}
-// 		else
-// 		{
-// 			this.display.draw(x, y, this.map[key], "#fff");
-// 		}
-
-// 	}
-// }
-// Game._generateObstructions = function(freeCells){
-// 	// for(var i=0; i<10;i++){
-// 	// 	var index = Math.floor(ROT.RNG.getUniform() * freeCells.length);
-// 	// 	var key = freeCells.splice(index, 1)[0];
-// 	// 	this.map[key] = "*"; //change some representations to a box?
-// 	// }
-
-// 	var index = Math.floor(ROT.RNG.getUniform() * freeCells.length);
-// 	var key = freeCells.splice(index, 1)[0];
-// 	this.map[key] = "⚞";
-
-// }
 Game._createPlayer = function(freeCells) {
 	var index = Math.floor(ROT.RNG.getUniform() * freeCells.length);
 	var key = freeCells.splice(index, 1)[0];
@@ -257,76 +90,6 @@ Game._createPlayer = function(freeCells) {
 	var y = parseInt(parts[1]);
 	this.player = new Player("save",x,y,false);
 }
-// Game._placePlayer = function(freeCells){
-// 	var index = Math.floor(ROT.RNG.getUniform() * freeCells.length);
-// 	var key = freeCells.splice(index,1)[0];
-// 	var parts = key.split(",");
-// 	var x = parseInt(parts[0]);
-// 	var y = parseInt(parts[1]);
-// 	//DEBUG: manually bang player properties
-// 	this.player._x = x;
-// 	this.player._y = y;
-// 	this.player._draw();
-// }
-// Game._debugAddMonster = function(actr, freeCells, playerRef){
-// 	var index = Math.floor(ROT.RNG.getUniform() * freeCells.length);
-// 	var key = freeCells.splice(index, 1)[0];
-// 	var parts = key.split(",");
-// 	var x = parseInt(parts[0]);
-// 	var y = parseInt(parts[1]);
-// 	var name = "debug";
-// 	return new actr(name, x, y, null, playerRef);
-// }
-// Game._generateRandomMonsters = function(actr, freeCells, playerRef){
-// 	var num = Math.floor(ROT.RNG.getUniform() * 10);
-// 	for(var i=0; i<num; i++){
-// 		var index = Math.floor(ROT.RNG.getUniform() * freeCells.length);
-// 		var key = freeCells.splice(index,1)[0];
-// 		var parts = key.split(",");
-// 		var x = parseInt(parts[0]);
-// 		var y = parseInt(parts[1]);
-// 		var types = {
-// 			"goblinoid": 5,
-// 			"rat swarm": 3,
-// 			"orc": 2,
-// 			"rainbowliz":1
-// 		}
-// 		var name = ROT.RNG.getWeightedValue(types);
-// 		var monster = new actr(name, x, y, null, playerRef);
-// 		this.monstersAlive.push(monster);
-// 	}
-// }
-// Game._drawAllEntities = function(){
-// 	//this function redraws all the current active entities on the map
-// 	//this includes the Player, all Enemies, and all Corpses
-// 	//in the future, it will extend to NPCs, Monuments, and other map objects
-
-// 	//intended use is for after closing of any menuing system
-// 	this.player._draw();
-
-// 	this.monstersAlive.forEach(function(value){
-// 		value._draw();
-// 	});
-
-// 	this.corpses.forEach(function(value){
-// 		value._drawCorpse();
-// 	});
-// }
-
-//!!!! DEPRECATED: Moved to Actor.js!!!!
-
-// class Actor{
-// 	constructor(name,x,y){
-// 		this.name = name;
-// 		this._x = x;
-// 		this._y = y;
-// 	}
-
-// 	move(nx,ny){
-// 		this._x = nx;
-// 		this._y = ny;
-// 	}
-// }
 
 class Player extends Actor{
 	constructor(name,x,y,fromSave){
@@ -347,7 +110,6 @@ class Player extends Actor{
 		
 		//DEBUG DEBUG DEBUG
 		//need to generate a debug weapon
-		//console.log(Game.itemDefs);
 		var strng = Game.itemDefs.weapons["stick"];
 		var spl = strng.split("/");
 		var stats = spl[5].split(",");
@@ -369,9 +131,6 @@ class Player extends Actor{
 
 
 		this.equipment.debugEquip("weap", weap);
-		//this.equipment.debugEquip = ("arm", [aaaarmor]);
-		//DEBUG DEBUG DEBUG
-				//console.log(this);
 		
 		//handlers for menus
 		this.inInventoryMenu = false;
@@ -448,7 +207,7 @@ class Player extends Actor{
 
 	modifyStats(effects){
 		for(var property in effects){
-			if(property === "HP"){ //HEALTH WORKS!!!!
+			if(property === "HP"){
 				this.HP += parseInt(effects[property]);
 				var hpHealed = parseInt(effects[property]);
 				if(this.HP > this.MAXHP){
