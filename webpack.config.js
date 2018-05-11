@@ -27,6 +27,14 @@ module.exports = {
         ]
       },
       devServer: {
+        clientLogLevel: 'warning',
+        open: true,
+        overlay: { warnings: false, errors: true },
+        quiet: true,
+        compress: true,
+        watchOptions: {
+            poll: true
+        },
         publicPath: __dirname,
         contentBase: path.join(__dirname, 'dist'),
         hot: true
