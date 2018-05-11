@@ -11,14 +11,24 @@ module.exports = {
         libraryTarget: 'var',
         library: 'GameLib' 
     },
+    mode: "none",
     module: {
-        loaders: [{
-            test: /\.css$/,
-            loaders: ['style', 'css']
-        },{
+        rules: [
+          {
             test: /\.js$/,
-            loaders: ['babel-loader'],
-            include: path.join(__dirname, 'src')
-        }]
-    }
+            exclude: /(node_modules|bower_components)/,
+            use: {
+              loader: 'babel-loader',
+              options: {
+                presets: ['env']
+              }
+            }
+          }
+        ]
+      },
+      devServer: {
+        publicPath: __dirname,
+        contentBase: path.join(__dirname, 'dist'),
+        hot: true
+      }
 }
