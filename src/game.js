@@ -1,3 +1,4 @@
+import ROT from './rot.js';
 import Map from "./map.js";
 import Inventory from "./actors/containers/inventory.js";
 import Equipment from "./actors/containers/equipment.js";
@@ -15,8 +16,8 @@ var Game = {
 
 	init: function() {
 		//init engine
-		console.log("hey");
 		this.display = new ROT.Display();
+		console.log(this.display._options.height);
 		//console.log(this.display);
 		this.map = new Map(this);
 		this.ui = new UI(0,this.display._options.height - this.clogHeight, this.display._options.width, this.clogHeight);
@@ -35,8 +36,8 @@ var Game = {
 		}
 
 		//bad practice, whatever
-		createjs.Sound.registerSound("music/MootBooxle_RogueLoop_A.ogg",this.sounds.music1);
-		createjs.Sound.registerSound("music/MootBooxle_RogueLoop_B.ogg",this.sounds.music2);
+		 createjs.Sound.registerSound("music/MootBooxle_RogueLoop_A.ogg",this.sounds.music1);
+		 createjs.Sound.registerSound("music/MootBooxle_RogueLoop_B.ogg",this.sounds.music2);
 
 		//need a create player call here VVVV
 
@@ -395,11 +396,8 @@ class Player extends Actor{
 		return this._y;
 	}
 
-<<<<<<< HEAD
-=======
 
 
->>>>>>> 22bc2f44bb0c0dc36626fbbb2fb7f869b5d93920
 	//Initializations
 	generateStatBlockFirstTime(){
 		this.level = 1;
@@ -443,13 +441,6 @@ class Player extends Actor{
 		//CON -> knight
 		//INT -> wizard
 		//WIS -> sage
-<<<<<<< HEAD
-
-
-		//possible debug?
-		this.firstTurn = true;
-=======
->>>>>>> 22bc2f44bb0c0dc36626fbbb2fb7f869b5d93920
 	}
 
 	//REQUIRED
@@ -509,22 +500,8 @@ class Player extends Actor{
 
 
 	act(){
-<<<<<<< HEAD
-		//draw everything here?
-		//need to wait a single turn...
-		if(!this.firstTurn){
-			//going to definitely need changed
 			Game.map._drawWholeMap();
 			Game.map._drawAllEntities();
-		}
-		else{
-			this.firstTurn = false;
-		}
-
-=======
-			Game.map._drawWholeMap();
-			Game.map._drawAllEntities();
->>>>>>> 22bc2f44bb0c0dc36626fbbb2fb7f869b5d93920
 		Game.engine.lock();
 		window.addEventListener("keydown", this);
 	}
@@ -542,10 +519,6 @@ class Player extends Actor{
  
 		var code = e.keyCode;
 		if(this.isDead){
-<<<<<<< HEAD
-			//console.log("YOU'RE DEAD GAME OVER");
-=======
->>>>>>> 22bc2f44bb0c0dc36626fbbb2fb7f869b5d93920
 			var text = ["THOU HATH DIED", "THY CORPSE LIE", "COLD...", "REFRESH BROWSER,", "PLEBIAN SOUL"];
 			Game.ui.pmenu((Game.display._options.width / 2)-10, 6, 20, 12, "The end!", text);
 			if(code === 13 || code === 32){
@@ -556,9 +529,6 @@ class Player extends Actor{
 			return;
 		}
 
-<<<<<<< HEAD
-
-=======
 		if(this.inCharMenu === true){
 			Game.map._drawWholeMap();
 			Game.ui.redrawCharMenu((Game.display._options.width / 2) - 20, 4,20,20,this.name,0);
@@ -576,7 +546,6 @@ class Player extends Actor{
 			this.inCharMenu = true; //set CharMenuFlag
 			return;
 		}
->>>>>>> 22bc2f44bb0c0dc36626fbbb2fb7f869b5d93920
 
 		if(this.inLootInspect === true){
 			var ret = Game.ui.handleInspectMenu(this, code, true);
@@ -1825,8 +1794,6 @@ class UI {
 		Game.display.drawText(x,y,str,width);
 	}
 
-<<<<<<< HEAD
-=======
 
 	//JUMP-PAD:XYZ991
 	redrawCharMenu(x,y,width,height,title,cursorSelection){
@@ -1852,7 +1819,6 @@ class UI {
 
 	}
 
->>>>>>> 22bc2f44bb0c0dc36626fbbb2fb7f869b5d93920
 	redrawIMenu(x,y,width,height,title,contents,cursorSelection,page){
 		var str = "%b{blue}";
 		var h = 0;
@@ -1936,8 +1902,6 @@ class UI {
 		this.reDrawInsMenu(this.insmenuX, this.insmenuY, this.insmenuWidth, this.insmenuHeight, "INSPECT", this.insmenuCursor, this.insmenuItem, this.insLoot);
 	}
 
-<<<<<<< HEAD
-=======
 	//displays character stats, and allows distribution of stats if level up occurs.
 	charMenu(x,y,width,height, title, stats){
 		this.charMenuX = x;
@@ -1948,7 +1912,6 @@ class UI {
 		this.charMenuStats = stats;
 	}
 
->>>>>>> 22bc2f44bb0c0dc36626fbbb2fb7f869b5d93920
 	imenu(x,y, width, height, title, contents, loot){
 		this.imenuX = x;
 		this.imenuY = y;
@@ -2000,9 +1963,6 @@ class UI {
 		Game.display.drawText(x,y,str,width);
 	}
 }
-
-<<<<<<< HEAD
-=======
 //UTILITY CLASSES (data structures, etc.)
 
 //Display Stats class
@@ -2027,11 +1987,10 @@ class displayStats{
 	}
 }
 
->>>>>>> 22bc2f44bb0c0dc36626fbbb2fb7f869b5d93920
-
 //EXTREMELY NECESSARY
 export class loader {
 	run(){
 		Game.init();
 	}
 }
+Game.init();

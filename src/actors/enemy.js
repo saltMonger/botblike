@@ -1,3 +1,4 @@
+import ROT from '../rot.js';
 import Actor from "./actor.js";
 import Corpse from "./containers/corpse.js";
 import Inventory from "./containers/inventory.js";
