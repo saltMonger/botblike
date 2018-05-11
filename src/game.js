@@ -395,6 +395,11 @@ class Player extends Actor{
 		return this._y;
 	}
 
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> 22bc2f44bb0c0dc36626fbbb2fb7f869b5d93920
 	//Initializations
 	generateStatBlockFirstTime(){
 		this.level = 1;
@@ -438,10 +443,13 @@ class Player extends Actor{
 		//CON -> knight
 		//INT -> wizard
 		//WIS -> sage
+<<<<<<< HEAD
 
 
 		//possible debug?
 		this.firstTurn = true;
+=======
+>>>>>>> 22bc2f44bb0c0dc36626fbbb2fb7f869b5d93920
 	}
 
 	//REQUIRED
@@ -501,6 +509,7 @@ class Player extends Actor{
 
 
 	act(){
+<<<<<<< HEAD
 		//draw everything here?
 		//need to wait a single turn...
 		if(!this.firstTurn){
@@ -512,6 +521,10 @@ class Player extends Actor{
 			this.firstTurn = false;
 		}
 
+=======
+			Game.map._drawWholeMap();
+			Game.map._drawAllEntities();
+>>>>>>> 22bc2f44bb0c0dc36626fbbb2fb7f869b5d93920
 		Game.engine.lock();
 		window.addEventListener("keydown", this);
 	}
@@ -529,7 +542,10 @@ class Player extends Actor{
  
 		var code = e.keyCode;
 		if(this.isDead){
+<<<<<<< HEAD
 			//console.log("YOU'RE DEAD GAME OVER");
+=======
+>>>>>>> 22bc2f44bb0c0dc36626fbbb2fb7f869b5d93920
 			var text = ["THOU HATH DIED", "THY CORPSE LIE", "COLD...", "REFRESH BROWSER,", "PLEBIAN SOUL"];
 			Game.ui.pmenu((Game.display._options.width / 2)-10, 6, 20, 12, "The end!", text);
 			if(code === 13 || code === 32){
@@ -540,7 +556,27 @@ class Player extends Actor{
 			return;
 		}
 
+<<<<<<< HEAD
 
+=======
+		if(this.inCharMenu === true){
+			Game.map._drawWholeMap();
+			Game.ui.redrawCharMenu((Game.display._options.width / 2) - 20, 4,20,20,this.name,0);
+			//need to wait for input?
+			return;
+		}
+
+		//consider switching to some custom keybind scheme
+		//move to key handler section
+		if(code === 67){
+			Game.ui.charMenu((Game.display._options.width / 2) - 20, 4,20,20,this.name,new displayStats(this.STR, this.DEX, this.CON,
+																this.INT, this.WIS, this.BAL, this.HIT, this.EVA,
+															this.ATK, this.MTK, this.DEF, this.MDEF).Stats);
+			Game.ui.redrawCharMenu((Game.display._options.width / 2) - 20, 4, 20,20,this.name,0);
+			this.inCharMenu = true; //set CharMenuFlag
+			return;
+		}
+>>>>>>> 22bc2f44bb0c0dc36626fbbb2fb7f869b5d93920
 
 		if(this.inLootInspect === true){
 			var ret = Game.ui.handleInspectMenu(this, code, true);
@@ -1789,6 +1825,34 @@ class UI {
 		Game.display.drawText(x,y,str,width);
 	}
 
+<<<<<<< HEAD
+=======
+
+	//JUMP-PAD:XYZ991
+	redrawCharMenu(x,y,width,height,title,cursorSelection){
+		console.log("inside redraw char menu");
+		var str = "%b{burlywood}%c{white}";
+
+		console.log(this.charMenuStats);
+
+		for(let key in this.charMenuStats){
+			var stat = key + ": " + this.charMenuStats[key];
+			var statL = stat.length; //length of inner string
+
+			console.log("pad length");
+			str += "|"; //start building the line
+			var s = this.strFormatter(stat, width - 2);
+			str += s;
+
+			str += "|";
+
+			console.log(str);
+		}
+		Game.display.drawText(x,y,str,width);
+
+	}
+
+>>>>>>> 22bc2f44bb0c0dc36626fbbb2fb7f869b5d93920
 	redrawIMenu(x,y,width,height,title,contents,cursorSelection,page){
 		var str = "%b{blue}";
 		var h = 0;
@@ -1872,6 +1936,19 @@ class UI {
 		this.reDrawInsMenu(this.insmenuX, this.insmenuY, this.insmenuWidth, this.insmenuHeight, "INSPECT", this.insmenuCursor, this.insmenuItem, this.insLoot);
 	}
 
+<<<<<<< HEAD
+=======
+	//displays character stats, and allows distribution of stats if level up occurs.
+	charMenu(x,y,width,height, title, stats){
+		this.charMenuX = x;
+		this.charMenuY = y;
+		this.charMenuWidth = width;
+		this.charMenuHeight = height;
+		this.charMenuTitle = title;
+		this.charMenuStats = stats;
+	}
+
+>>>>>>> 22bc2f44bb0c0dc36626fbbb2fb7f869b5d93920
 	imenu(x,y, width, height, title, contents, loot){
 		this.imenuX = x;
 		this.imenuY = y;
@@ -1924,6 +2001,33 @@ class UI {
 	}
 }
 
+<<<<<<< HEAD
+=======
+//UTILITY CLASSES (data structures, etc.)
+
+//Display Stats class
+class displayStats{
+	//an object mapped with current player stats, specifically for display
+	//in the char menu.
+	constructor(str,dex,con,int,wis,bal,hit,eva,atk,mtk,def,mdef){
+		this.Stats = {
+			"STR": str,
+			"DEX": dex,
+			"CON": con,
+			"INT": int,
+			"WIS": wis,
+			"BAL": bal,
+			"HIT": hit,
+			"EVA": eva,
+			"ATK": atk,
+			"MTK": mtk,
+			"DEF": def,
+			"MDEF": mdef
+		}
+	}
+}
+
+>>>>>>> 22bc2f44bb0c0dc36626fbbb2fb7f869b5d93920
 
 //EXTREMELY NECESSARY
 export class loader {
