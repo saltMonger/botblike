@@ -6,14 +6,19 @@ import Equipment from "./containers/equipment.js";
 import Weapon from "../items/weapon.js";
 import Consumable from "../items/consumable.js";
 
+//player object layout:
+//STATS: object contains all stats related to the player <== this should be broken into a stat block object somewhere
+//this will be extended later to hold a SKILLS object
+
 export default class Player extends Actor{
-	constructor(name,x,y,fromSave, gameObjectReference){
+	constructor(name,x,y,isLoadingFromSave, gameObjectReference){
 		super(name,x,y);
 
 		//set handle so that main game loop, enemies, containers, etc. can target player, and vice-versa
 		this.gameObjectReference = gameObjectReference;
 
-		if(fromSave){
+		if(isLoadingFromSave){
+			//TODO: implement player save/restore
 			//get_player_save
 		}
 		else{
@@ -24,13 +29,13 @@ export default class Player extends Actor{
 			//generate all skills
 			this.generateStatBlockFirstTime();
 		}
-		this.inventory = new Inventory(this.STR, this);
+		this.inventory = new Inventory(this.Strength, this);
 		this.equipment = new Equipment(this);
 		
-		//DEBUG DEBUG DEBUG
-		//need to generate a debug weapon
-		//console.log(this.gameObjectReference.itemDefs);
-		debugger;
+
+		//note, this generates debug equipment and inventory
+		//this should be adapted at some point to provide a starter weapon based on class
+		//==============================================================================
 		var strng = this.gameObjectReference.itemDefs.weapons["stick"];
 		var spl = strng.split("/");
 		var stats = spl[5].split(",");
@@ -49,14 +54,11 @@ export default class Player extends Actor{
 			//console.log(item);
 			this.inventory.addItem(item);
 		}
-
-
 		this.equipment.debugEquip("weap", weap);
-		//this.equipment.debugEquip = ("arm", [aaaarmor]);
-		//DEBUG DEBUG DEBUG
-				//console.log(this);
+		//==============================================================================
 		
-		//handlers for menus
+		//MENU HANDLER VALUES==========================
+		//=============================================
 		this.inInventoryMenu = false;
 		this.inInspectMenu = false;
 		this.inLootMenu = false;
@@ -66,7 +68,7 @@ export default class Player extends Actor{
 		this.inLootInspect = false;
 		this.inspectItem = 0;
 		this.corpseInspect = -1;
-		//handlers for menus
+		//=============================================
 
 		this._draw();
 	}
@@ -85,34 +87,31 @@ export default class Player extends Actor{
 
 
 		//TODO: this is current PoC/Example code
-		this.STR = Math.abs(Math.floor(ROT.RNG.getNormal(0,1)*10)); //get a normal distribution
-		this.DEX = Math.abs(Math.floor(ROT.RNG.getNormal(0,1)*10));
-		this.CON = Math.abs(Math.floor(ROT.RNG.getNormal(0,1)*10));
-		this.INT = Math.abs(Math.floor(ROT.RNG.getNormal(0,1)*10));
-		this.WIS = Math.abs(Math.floor(ROT.RNG.getNormal(0,1)*10));
+		this.Strength = Math.abs(Math.floor(ROT.RNG.getNormal(0,1)*10)); //get a normal distribution
+		this.Dexterity = Math.abs(Math.floor(ROT.RNG.getNormal(0,1)*10));
+		this.Constitution = Math.abs(Math.floor(ROT.RNG.getNormal(0,1)*10));
+		this.Intelligence = Math.abs(Math.floor(ROT.RNG.getNormal(0,1)*10));
+		this.Wisdom = Math.abs(Math.floor(ROT.RNG.getNormal(0,1)*10));
 
 		//DEBUG
-		this.BAL = 1;
+		this.Balance = 1;
 		//DEBUG
 
-		this.HIT = Math.floor(this.DEX / 2);
-		this.EVA = Math.floor(this.DEX / 2);
-		this.ATK = Math.floor(this.STR / 2);
-		this.MTK = Math.floor(this.INT / 2);
-		this.DEF = Math.floor(this.CON / 10);
-		this.MDEF = Math.floor(this.WIS/10);
+		this.HitChance = Math.floor(this.Dexterity / 2);
+		this.Evasion = Math.floor(this.Dexterity / 2);
+		this.Attack = Math.floor(this.Strength / 2);
+		this.MagicAttack = Math.floor(this.Intelligence / 2);
+		this.Defense = Math.floor(this.Constitution / 10);
+		this.MagicDefense = Math.floor(this.Wisdom/10);
 		//REAL		
-		//this.HP = Math.floor(5 + this.CON / (1.2));
+		//this.HP = Math.floor(5 + this.Constitution / (1.2));
 		//DEBUG:
-		this.MAXHP = 10 + Math.floor(this.CON / 2);
+		this.MAXHP = 10 + Math.floor(this.Constitution / 2);
 		this.HP = this.MAXHP;
-		this.MP = Math.floor(this.INT * this.WIS * 4);
-		this.HEAL = Math.floor(this.WIS/2);
+		this.MP = Math.floor(this.Intelligence * this.Wisdom * 4);
+		this.HealingPower = Math.floor(this.Wisdom/2);
 		
 		this.isDead = false;
-
-		//do for all stats
-
 		//XP
 		this.XP = 0;
 		this.nextLevel = 50;
@@ -129,15 +128,16 @@ export default class Player extends Actor{
 		this.gameObjectReference.display.draw(this._x, this._y, "@", "#ff0");
 	}
 
+	//TODO: setup a more generic handler that can use any property in the stat block
+	//without having to do a comparison
 	modifyStats(effects){
 		for(var property in effects){
-			if(property === "HP"){ //HEALTH WORKS!!!!
+			if(property === "HP"){
 				this.HP += parseInt(effects[property]);
 				var hpHealed = parseInt(effects[property]);
 				if(this.HP > this.MAXHP){
 					this.HP = this.MAXHP;
 				}
-				//numerical error here: FIX THIS TODO FIX
 				var msg = this.name + " healed " + parseInt(effects[property]) + " health";
 				this.gameObjectReference.ui.updateClog(msg,"SpringGreen");
 			}
@@ -156,20 +156,20 @@ export default class Player extends Actor{
 
 	doLevelUp(){
 		this.level += 1;
-		this.STR = Math.floor(ROT.RNG.getUniform() * 5) + parseInt(this.STR);
-		this.DEX = Math.floor(ROT.RNG.getUniform() * 5) + parseInt(this.DEX);
-		this.CON = Math.floor(ROT.RNG.getUniform() * 5) + parseInt(this.CON);
-		this.INT = Math.floor(ROT.RNG.getUniform() * 5) + parseInt(this.INT);
-		this.WIS = Math.floor(ROT.RNG.getUniform() * 5) + parseInt(this.WIS);
+		this.Strength = Math.floor(ROT.RNG.getUniform() * 5) + parseInt(this.Strength);
+		this.Dexterity = Math.floor(ROT.RNG.getUniform() * 5) + parseInt(this.Dexterity);
+		this.Constitution = Math.floor(ROT.RNG.getUniform() * 5) + parseInt(this.Constitution);
+		this.Intelligence = Math.floor(ROT.RNG.getUniform() * 5) + parseInt(this.Intelligence);
+		this.Wisdom = Math.floor(ROT.RNG.getUniform() * 5) + parseInt(this.Wisdom);
 
-		this.HIT = Math.floor(this.DEX / 2);
-		this.EVA = Math.floor(this.DEX / 2)
-		this.ATK = Math.floor(this.STR / 2);
-		this.MTK = Math.floor(this.INT / 2);
-		this.DEF = Math.floor(this.CON / 10);
-		this.MDEF = Math.floor(this.WIS/10);
+		this.HitChance = Math.floor(this.Dexterity / 2);
+		this.Evasion = Math.floor(this.Dexterity / 2)
+		this.Attack = Math.floor(this.Strength / 2);
+		this.MagicAttack = Math.floor(this.Intelligence / 2);
+		this.Defense = Math.floor(this.Constitution / 10);
+		this.MagicDefense = Math.floor(this.Wisdom/10);
 
-		this.MAXHP = Math.floor(this.CON / 2) + parseInt(this.STR);
+		this.MAXHP = Math.floor(this.Constitution / 2) + parseInt(this.Strength);
 		this.HP = this.MAXHP;
 
 		this.nextLevel = parseInt(this.nextLevel) * 2; //just double the required level
@@ -181,12 +181,13 @@ export default class Player extends Actor{
 
 
 	act(){
-			this.gameObjectReference.map._drawWholeMap();
-			this.gameObjectReference.map._drawAllEntities();
+		this.gameObjectReference.map._drawWholeMap();
+		this.gameObjectReference.map._drawAllEntities();
 		this.gameObjectReference.engine.lock();
 		window.addEventListener("keydown", this);
 	}
 
+	//TODO: This will likely require a rewrite, espcially if the windowing/ui system is updated
 	handleEvent(e){
 		var keyMap = {};
 		keyMap[38] = 0;
@@ -220,9 +221,9 @@ export default class Player extends Actor{
 		//consider switching to some custom keybind scheme
 		//move to key handler section
 		if(code === 67){
-			this.gameObjectReference.ui.charMenu((this.gameObjectReference.display._options.width / 2) - 20, 4,20,20,this.name,new displayStats(this.STR, this.DEX, this.CON,
-																this.INT, this.WIS, this.BAL, this.HIT, this.EVA,
-															this.ATK, this.MTK, this.DEF, this.MDEF).Stats);
+			this.gameObjectReference.ui.charMenu((this.gameObjectReference.display._options.width / 2) - 20, 4,20,20,this.name,new displayStats(this.Strength, this.Dexterity, this.Constitution,
+																this.Intelligence, this.Wisdom, this.Atk, this.HitChance, this.Evasion,
+															this.Attack, this.MagicAttack, this.Defense, this.MagicDefense).Stats);
 			this.gameObjectReference.ui.redrawCharMenu((this.gameObjectReference.display._options.width / 2) - 20, 4, 20,20,this.name,0);
 			this.inCharMenu = true; //set CharMenuFlag
 			return;
@@ -283,8 +284,6 @@ export default class Player extends Actor{
 		if(this.inInventoryMenu === true){
 			this.gameObjectReference.map._drawWholeMap();
 			var ret = this.gameObjectReference.ui.menuHandler(code);
-			//console.log("ret:" + ret);
-			//console.log(ret);
 			if (ret === -1){
 				this.inInventoryMenu = false;
 				this.gameObjectReference.map._drawWholeMap();
@@ -292,16 +291,11 @@ export default class Player extends Actor{
 				return;
 			}
 			else if(ret > 0){
-				//console.log("hey");
 				ret -= 1; //account for manual offset from menuHandler
 				this.inInspectMenu = true;
-				//console.log(this.inventory.contents);
-				//console.log("ret: " + ret);
 				this.inspectItem = this.inventory.contents[ret];
-				//console.log(this.inspectItem);
 				this.gameObjectReference.map._drawWholeMap();
 				this.gameObjectReference.ui.insMenu((this.gameObjectReference.display._options.width / 2) - 10, 4, 20, 12,this.inspectItem,false); //loot is false here
-				//this.gameObjectReference.ui.ins
 				return;
 			}
 			else{
@@ -401,8 +395,8 @@ export default class Player extends Actor{
 	//Combat functions
 	fight(target){
 		//console.log("wp attack: " + this.equipment.weapon.atk);
-		//console.log("regular atk: " + this.ATK);
-		var dmgOutput = parseInt(this.ATK) + parseInt(this.equipment.weapon.atk); // FOR LATER: this.equipment.weapon.ATK;
+		//console.log("regular atk: " + this.Attack);
+		var dmgOutput = parseInt(this.Attack) + parseInt(this.equipment.weapon.atk); // FOR LATER: this.equipment.weapon.ATK;
 		//console.log("player fighting" + dmgOutput);
 		target.takeDamage(dmgOutput,"PHYS");
 		//console.log(target);
@@ -414,14 +408,14 @@ export default class Player extends Actor{
 		var dmgtaken = 0;
 		var msg = "";
 		if(type === "PHYS"){
-			dmgtaken = Math.floor(dmginput - (dmginput * (this.DEF/100)));
+			dmgtaken = Math.floor(dmginput - (dmginput * (this.Defense/100)));
 			if(dmgtaken < 1){
 				dmgtaken = 1;
 			}
 			msg = this.name + " takes " + dmgtaken + " damage from " + enemyName;
 		}
 		else{
-			dmgtaken = Math.floor(dmginput * (dmginput * (this.MDEF/100)));
+			dmgtaken = Math.floor(dmginput * (dmginput * (this.MagicDefense/100)));
 			if(dmgtaken < 1){
 				dmgtaken = 1;
 			}
