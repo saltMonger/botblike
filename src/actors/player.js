@@ -1,8 +1,18 @@
+import ROT from "../rot.js";
 import Actor from "./actor.js";
+import Inventory from "./containers/inventory.js";
+import Equipment from "./containers/equipment.js";
 
-class Player extends Actor{
-	constructor(name,x,y,fromSave){
+import Weapon from "../items/weapon.js";
+import Consumable from "../items/consumable.js";
+
+export default class Player extends Actor{
+	constructor(name,x,y,fromSave, gameObjectReference){
 		super(name,x,y);
+
+		//set handle so that main game loop, enemies, containers, etc. can target player, and vice-versa
+		this.gameObjectReference = gameObjectReference;
+
 		if(fromSave){
 			//get_player_save
 		}
@@ -19,8 +29,9 @@ class Player extends Actor{
 		
 		//DEBUG DEBUG DEBUG
 		//need to generate a debug weapon
-		//console.log(Game.itemDefs);
-		var strng = Game.itemDefs.weapons["stick"];
+		//console.log(this.gameObjectReference.itemDefs);
+		debugger;
+		var strng = this.gameObjectReference.itemDefs.weapons["stick"];
 		var spl = strng.split("/");
 		var stats = spl[5].split(",");
 		var weap = new Weapon(spl[0],spl[2],spl[3],stats[0],stats[1]);
@@ -32,7 +43,7 @@ class Player extends Actor{
 				"potion": 2,
 				"superior potion": 1
 			}
-			strng = Game.itemDefs.potions["inferior potion"];
+			strng = this.gameObjectReference.itemDefs.potions["inferior potion"];
 			var spla = strng.split("/");
 			var item = new Consumable(spla[0],spla[2],spla[3],{"HP": spla[5]});
 			//console.log(item);
@@ -115,7 +126,7 @@ class Player extends Actor{
 
 	//REQUIRED
 	_draw(){
-		Game.display.draw(this._x, this._y, "@", "#ff0");
+		this.gameObjectReference.display.draw(this._x, this._y, "@", "#ff0");
 	}
 
 	modifyStats(effects){
@@ -128,7 +139,7 @@ class Player extends Actor{
 				}
 				//numerical error here: FIX THIS TODO FIX
 				var msg = this.name + " healed " + parseInt(effects[property]) + " health";
-				Game.ui.updateClog(msg,"SpringGreen");
+				this.gameObjectReference.ui.updateClog(msg,"SpringGreen");
 			}
 		}
 	}
@@ -136,7 +147,7 @@ class Player extends Actor{
 	gainXP(xp){
 		this.XP += xp;
 		var msg = this.name + " has gained " + xp + " experience!";
-		Game.ui.updateClog(msg, "SpringGreen");
+		this.gameObjectReference.ui.updateClog(msg, "SpringGreen");
 		if(this.XP >= this.nextLevel){
 			this.doLevelUp();
 		}
@@ -165,14 +176,14 @@ class Player extends Actor{
 		this.XP = 0;  //reset XP to zero
 
 		var msg = this.name + " has leveled up!";
-		Game.ui.updateClog(msg, "SpringGreen");
+		this.gameObjectReference.ui.updateClog(msg, "SpringGreen");
 	}
 
 
 	act(){
-			Game.map._drawWholeMap();
-			Game.map._drawAllEntities();
-		Game.engine.lock();
+			this.gameObjectReference.map._drawWholeMap();
+			this.gameObjectReference.map._drawAllEntities();
+		this.gameObjectReference.engine.lock();
 		window.addEventListener("keydown", this);
 	}
 
@@ -190,18 +201,18 @@ class Player extends Actor{
 		var code = e.keyCode;
 		if(this.isDead){
 			var text = ["THOU HATH DIED", "THY CORPSE LIE", "COLD...", "REFRESH BROWSER,", "PLEBIAN SOUL"];
-			Game.ui.pmenu((Game.display._options.width / 2)-10, 6, 20, 12, "The end!", text);
+			this.gameObjectReference.ui.pmenu((this.gameObjectReference.display._options.width / 2)-10, 6, 20, 12, "The end!", text);
 			if(code === 13 || code === 32){
-				Game._restartGame();
-				Game.engine.unlock();
+				this.gameObjectReference._restartthis.gameObjectReference();
+				this.gameObjectReference.engine.unlock();
 
 			}
 			return;
 		}
 
 		if(this.inCharMenu === true){
-			Game.map._drawWholeMap();
-			Game.ui.redrawCharMenu((Game.display._options.width / 2) - 20, 4,20,20,this.name,0);
+			this.gameObjectReference.map._drawWholeMap();
+			this.gameObjectReference.ui.redrawCharMenu((this.gameObjectReference.display._options.width / 2) - 20, 4,20,20,this.name,0);
 			//need to wait for input?
 			return;
 		}
@@ -209,21 +220,21 @@ class Player extends Actor{
 		//consider switching to some custom keybind scheme
 		//move to key handler section
 		if(code === 67){
-			Game.ui.charMenu((Game.display._options.width / 2) - 20, 4,20,20,this.name,new displayStats(this.STR, this.DEX, this.CON,
+			this.gameObjectReference.ui.charMenu((this.gameObjectReference.display._options.width / 2) - 20, 4,20,20,this.name,new displayStats(this.STR, this.DEX, this.CON,
 																this.INT, this.WIS, this.BAL, this.HIT, this.EVA,
 															this.ATK, this.MTK, this.DEF, this.MDEF).Stats);
-			Game.ui.redrawCharMenu((Game.display._options.width / 2) - 20, 4, 20,20,this.name,0);
+			this.gameObjectReference.ui.redrawCharMenu((this.gameObjectReference.display._options.width / 2) - 20, 4, 20,20,this.name,0);
 			this.inCharMenu = true; //set CharMenuFlag
 			return;
 		}
 
 		if(this.inLootInspect === true){
-			var ret = Game.ui.handleInspectMenu(this, code, true);
+			var ret = this.gameObjectReference.ui.handleInspectMenu(this, code, true);
 			if(ret === 1){
 				//end inLootInspect
 				this.inLootInspect = false;
 				this.inspectItem = null;
-				Game.ui.imenu((Game.display._options.width / 2) - 20, 4, 40, 12, "Loot", this.corpseInspect.loot.contents, true);
+				this.gameObjectReference.ui.imenu((this.gameObjectReference.display._options.width / 2) - 20, 4, 40, 12, "Loot", this.corpseInspect.loot.contents, true);
 				return;
 			}
 			else{
@@ -232,12 +243,12 @@ class Player extends Actor{
 		}
 
 		if(this.inInspectMenu === true){
-			var ret = Game.ui.handleInspectMenu(this, code, false);
+			var ret = this.gameObjectReference.ui.handleInspectMenu(this, code, false);
 			if(ret === 1){
 				//end inInspectMenu
 				this.inInspectMenu = false;
 				this.inspectItem =  null;
-				Game.ui.imenu((Game.display._options.width / 2)- 20, 4, 40, 12,"Inventory",this.inventory.contents, false);
+				this.gameObjectReference.ui.imenu((this.gameObjectReference.display._options.width / 2)- 20, 4, 40, 12,"Inventory",this.inventory.contents, false);
 				return;
 			}
 			else{
@@ -246,22 +257,22 @@ class Player extends Actor{
 		}
 
 		if(this.inLootMenu === true){
-			Game.map._drawWholeMap();
-			var ret = Game.ui.menuHandler(code);
+			this.gameObjectReference.map._drawWholeMap();
+			var ret = this.gameObjectReference.ui.menuHandler(code);
 			if(ret === -1){
 				this.inLootMenu = false;
-				Game.map._drawWholeMap();
-				var index = Game.map.corpses.indexOf(this.corpseInspect);
-				Game.map.corpses.splice(index, 1); //remove the corpse from the array
-				Game.map._drawAllEntities();
+				this.gameObjectReference.map._drawWholeMap();
+				var index = this.gameObjectReference.map.corpses.indexOf(this.corpseInspect);
+				this.gameObjectReference.map.corpses.splice(index, 1); //remove the corpse from the array
+				this.gameObjectReference.map._drawAllEntities();
 				return;
 			}
 			else if(ret > 0){
 				ret -= 1;
 				this.inLootInspect = true;
 				this.inspectItem = this.corpseInspect.loot.contents[ret];
-				Game.map._drawWholeMap();
-				Game.ui.insMenu((Game.display._options.width /2 ) - 10, 4, 20,  12, this.inspectItem, true);
+				this.gameObjectReference.map._drawWholeMap();
+				this.gameObjectReference.ui.insMenu((this.gameObjectReference.display._options.width /2 ) - 10, 4, 20,  12, this.inspectItem, true);
 				return;
 			}
 			else{
@@ -270,14 +281,14 @@ class Player extends Actor{
 		}
 
 		if(this.inInventoryMenu === true){
-			Game.map._drawWholeMap();
-			var ret = Game.ui.menuHandler(code);
+			this.gameObjectReference.map._drawWholeMap();
+			var ret = this.gameObjectReference.ui.menuHandler(code);
 			//console.log("ret:" + ret);
 			//console.log(ret);
 			if (ret === -1){
 				this.inInventoryMenu = false;
-				Game.map._drawWholeMap();
-				Game.map._drawAllEntities();			
+				this.gameObjectReference.map._drawWholeMap();
+				this.gameObjectReference.map._drawAllEntities();			
 				return;
 			}
 			else if(ret > 0){
@@ -288,9 +299,9 @@ class Player extends Actor{
 				//console.log("ret: " + ret);
 				this.inspectItem = this.inventory.contents[ret];
 				//console.log(this.inspectItem);
-				Game.map._drawWholeMap();
-				Game.ui.insMenu((Game.display._options.width / 2) - 10, 4, 20, 12,this.inspectItem,false); //loot is false here
-				//Game.ui.ins
+				this.gameObjectReference.map._drawWholeMap();
+				this.gameObjectReference.ui.insMenu((this.gameObjectReference.display._options.width / 2) - 10, 4, 20, 12,this.inspectItem,false); //loot is false here
+				//this.gameObjectReference.ui.ins
 				return;
 			}
 			else{
@@ -299,7 +310,7 @@ class Player extends Actor{
 		}
 
 		if(code === 73){ //this is the keycode for "I"
-			Game.ui.imenu((Game.display._options.width / 2)- 20, 4, 40, 12,"Inventory",this.inventory.contents, false);
+			this.gameObjectReference.ui.imenu((this.gameObjectReference.display._options.width / 2)- 20, 4, 40, 12,"Inventory",this.inventory.contents, false);
 			this.inInventoryMenu = true;
 		}
 		else if(code === 87){//TODO: Maybe consider a better mapping for this. Current mapping is "W"
@@ -309,7 +320,7 @@ class Player extends Actor{
 			this.modifyStats(restBenefits);
 			//possibly controversial?
 			window.removeEventListener("keydown",this.handleEvent);  //this is important!
-			Game.engine.unlock();
+			this.gameObjectReference.engine.unlock();
 			return;
 		}
 
@@ -328,62 +339,62 @@ class Player extends Actor{
 
 		var newKey = newX + "," + newY;
 
-		if(!(newKey in Game.map.currMap) || (Game.map.currMap[newKey] === "#")){
+		if(!(newKey in this.gameObjectReference.map.currMap) || (this.gameObjectReference.map.currMap[newKey] === "#")){
 			return;
 		}//can't move in this direction
-		else if(Game.map.currMap[newKey] === "V"){ //"⚞"){
-			//Game.map.floor += 1;
-			if(Game.map.floor < 30){
-				//Game._generateMapDeeper();
+		else if(this.gameObjectReference.map.currMap[newKey] === "V"){ //"⚞"){
+			//this.gameObjectReference.map.floor += 1;
+			if(this.gameObjectReference.map.floor < 30){
+				//this.gameObjectReference._generateMapDeeper();
 				//TODO: add call to change the floor the player is on to descend
 
-				Game.map._changeFloor("Down"); //this will load the floor
+				this.gameObjectReference.map._changeFloor("Down"); //this will load the floor
 				window.removeEventListener("keydown",this.handleEvent);  //this is important!
-				Game.engine.unlock();
-				// var msg = "You has descend to floor " + Game.floor + "!";
-				// Game.ui.updateClog(msg, "white");
+				this.gameObjectReference.engine.unlock();
+				// var msg = "You has descend to floor " + this.gameObjectReference.floor + "!";
+				// this.gameObjectReference.ui.updateClog(msg, "white");
 				return;
 			}
 		}
-		else if(Game.map.currMap[newKey] === "^"){// "⚟"){
-			Game.map._changeFloor("Up");
+		else if(this.gameObjectReference.map.currMap[newKey] === "^"){// "⚟"){
+			this.gameObjectReference.map._changeFloor("Up");
 			window.removeEventListener("keydown",this.handleEvent);  //this is important!
-			Game.engine.unlock();
+			this.gameObjectReference.engine.unlock();
 			return;
 		}
-		else if(Game.map.monstersAlive.length > 0){
-			for(var i=0; i<Game.map.monstersAlive.length; i++){
-				if(newX === Game.map.monstersAlive[i]._x && newY === Game.map.monstersAlive[i]._y){
+		else if(this.gameObjectReference.map.monstersAlive.length > 0){
+			for(var i=0; i<this.gameObjectReference.map.monstersAlive.length; i++){
+				if(newX === this.gameObjectReference.map.monstersAlive[i]._x && newY === this.gameObjectReference.map.monstersAlive[i]._y){
 					//fight this one!
-					this.fight(Game.map.monstersAlive[i]);
+					this.fight(this.gameObjectReference.map.monstersAlive[i]);
 					window.removeEventListener("keydown",this.handleEvent);  //this is important!
-					Game.engine.unlock();
+					this.gameObjectReference.engine.unlock();
 					return;
 				}
 			}
 		}
 
-		if(Game.map.corpses.length > 0){
-			for(var i=0; i<Game.map.corpses.length; i++){
-				if(newX === Game.map.corpses[i]._x && newY === Game.map.corpses[i]._y){
-					this.corpseInspect = Game.map.corpses[i];
+		if(this.gameObjectReference.map.corpses.length > 0){
+			for(var i=0; i<this.gameObjectReference.map.corpses.length; i++){
+				if(newX === this.gameObjectReference.map.corpses[i]._x && newY === this.gameObjectReference.map.corpses[i]._y){
+					this.corpseInspect = this.gameObjectReference.map.corpses[i];
 					this.inLootMenu = true;
 					//console.log("game corpses:");
-					//console.log(Game.corpses);
-					Game.ui.imenu((Game.display._options.width / 2)- 20, 4, 40, 12,"Inventory",Game.map.corpses[i].loot.contents, true);
+					//console.log(this.gameObjectReference.corpses);
+					this.gameObjectReference.ui.imenu((this.gameObjectReference.display._options.width / 2)- 20, 4, 40, 12,"Inventory",this.gameObjectReference.map.corpses[i].loot.contents, true);
 					return;
 				}
 			}
 		}
 
 
-		Game.display.draw(this._x, this._y, Game.map[this._x+","+this._y]);
+		this.gameObjectReference.display.draw(this._x, this._y, this.gameObjectReference.map[this._x+","+this._y]);
 		this._x = newX;
 		this._y = newY;
 		this._draw();
 		window.removeEventListener("keydown",this.handleEvent);  //this is important!
 		//console.log("before unlock");
-		Game.engine.unlock(); //also, so is this!
+		this.gameObjectReference.engine.unlock(); //also, so is this!
 	}	
 	
 
@@ -418,7 +429,7 @@ class Player extends Actor{
 		}
 		//TODO:
 		this.HP -= dmgtaken;
-		Game.ui.updateClog(msg,"red");
+		this.gameObjectReference.ui.updateClog(msg,"red");
 		if(this.HP < 1){
 			this.doDeath();
 		}
