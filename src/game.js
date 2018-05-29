@@ -39,42 +39,26 @@ var Game = {
 		 createjs.Sound.registerSound("music/MootBooxle_RogueLoop_A.ogg",this.sounds.music1);
 		 createjs.Sound.registerSound("music/MootBooxle_RogueLoop_B.ogg",this.sounds.music2);
 
-		//need a create player call here VVVV
-
 		//generate map and place players
 		var nKey = ["0,0"];
 		this._createPlayer(nKey);
 
 		this.scheduler = new ROT.Scheduler.Simple();
 
-		//maybe need some control for map depth
 		this.map._generateMap(30);
 		//do the generate here, should be good.
 
 		this.scheduler.add(this.player, true);
-		// //DEBUG
-		// for(var i=0; i<this.monstersAlive.length; i++){
-		// 	this.scheduler.add(this.monstersAlive[i], true);
-		// }
-		
-
+	
 		this.engine = new ROT.Engine(this.scheduler);
 		this.engine.start();
 
-		        //load the map for the first time
+		//load the map for the first time
         this.map._loadMap(this.map.floor);
 		
 		this.ui.repaintClog();
 	}
 }
-
-// var dist = function(x1,y1,x2,y2){
-// 	var a = Math.pow(x2 - x1, 2);
-// 	var b = Math.pow(y2 - y1, 2);
-// 	var c = Math.sqrt(a + b);
-// 	//console.log(c);
-// 	return c;
-// }
 
 //DECLARE ENGINE VARS ETC.
 Game.player = null;
@@ -88,51 +72,7 @@ Game.itemDefs = null;
 Game._setItemDefinitions = function(){
 	this.itemDefs = new ItemDefinitions("r");
 }
-// Game._generateMap = function() {
-// 	//console.log(this.display);
-// 	var digger = new ROT.Map.Digger(this.display._options.width, this.display._options.height - this.clogHeight);
-// 	var freeCells = [];
 
-
-// 	//PROBABLY A BAD WAY TO DO THIS
-// 	setTimeout(function(){
-// 	//console.log("loading music...");
-	
-// 	var rSounds = {
-// 		"music1": 1,
-// 		"music2": 1
-// 	}
-// 	var ran = ROT.RNG.getWeightedValue(rSounds);
-// 	//console.log(ran);
-// 	//console.log(this.sounds);
-// 	var instance = createjs.Sound.play(this.sounds[ran],"none",0,0,-1);
-// 	instance.volume = 1;
-// 	//console.log("this is the instance");
-// 	//console.log(instance);
-// 	}.bind(this), 7000);
-
-
-
-
-
-// 	var digCallback = function(x, y, value){
-// 		var key = x+ "," + y;
-// 		if(value) {
-// 			this.map[key] = "#";
-// 		}
-// 		else
-// 		{
-// 			this.map[key] = ".";
-// 			freeCells.push(key);
-// 		}
-// 	}
-// 	digger.create(digCallback.bind(this));
-// 	this._generateObstructions(freeCells);
-// 	Game._drawWholeMap();
-// 	this._createPlayer(freeCells);
-// 	//console.log(Game.player);
-// 	Game._generateRandomMonsters(Enemy, freeCells, Game.player);
-// }
 Game._restartGame = function(){
 	for(var i=0; i<this.map.monstersAlive.length; i++){
 		this.scheduler.remove(this.map.monstersAlive[i]);
@@ -140,115 +80,10 @@ Game._restartGame = function(){
 	this.scheduler.remove(this.player);
 	this.player = null;
 	this.floor = 1;
-	//console.log(this);
 	Game._generateMap();
 
 }
-// Game._generateMapDeeper = function(){
-// 	if(this.floor  === 30){
-// 			var text = ["THOU HATH WON", "THANK THEE", "FOR PLAYING", "REFRESH BROWSER,", "KNIGHTLY SOUL"];
-// 			Game.ui.pmenu((Game.display._options.width / 2)-10, 6, 20, 12, "The end!", text);
-// 	}
 
-
-// 	for(var i=0; i<this.monstersAlive.length; i++){
-// 		this.scheduler.remove(this.monstersAlive[i]);
-// 	}
-// 	var digger = new ROT.Map.Digger(this.display._options.width, this.display._options.height - this.clogHeight);
-// 	var freeCells = [];
-
-// 	var rSounds = {
-// 		"music1": 1,
-// 		"music2": 1
-// 	}
-
-// 	if(this.floor % 10 === 0){
-// 		//console.log("loading music...");
-// 		var ran = ROT.RNG.getWeightedValue(rSounds);
-// 		//console.log(ran);
-
-// 		var instance = createjs.Sound.play(this.sounds[ran],"none",0,0,-1);
-// 		instance.volume = 1;
-// 		//console.log("this is the instance");
-// 		//console.log(instance);
-// 	}
-
-
-// 	//console.log("GENERATING DEEPER MAP");
-// 	//reset monster refs
-// 	this.monstersAlive = [];
-// 	this.coprses = [];
-// 	this.map = {}; // CLEAR MAP TOO HOLY SHIT
-// 	//reset monster refs
-	
-// 	var digCallback = function(x, y, value){
-// 		var key = x+ "," + y;
-// 		if(value) {
-// 			this.map[key] = "#";
-// 		}
-// 		else
-// 		{
-// 			this.map[key] = ".";
-// 			freeCells.push(key);
-// 		}
-// 	}
-
-// 	digger.create(digCallback.bind(this));
-// 	this._generateObstructions(freeCells);
-// 	Game._drawWholeMap();
-// 	this._placePlayer(freeCells);
-// 	Game._generateRandomMonsters(Enemy, freeCells, Game.player);
-// 	for(var i=0; i<this.monstersAlive.length; i++){
-// 		this.scheduler.add(this.monstersAlive[i], true);
-// 	}
-// 	//console.log(this.monstersAlive);
-// 	//console.log("floor:" + this.floor);
-// }
-// Game._drawWholeMap = function() {
-// 	for (var key in this.map) {
-// 		var parts = key.split(",");
-// 		var x = parseInt(parts[0]);
-// 		var y = parseInt(parts[1]);
-// 		if(this.map[key] === "#"){
-// 			var c = 0;
-// 			//TODO: Maybe make this better?
-// 			for(var i=-1;i<2;i++){
-// 				for(var j=-1;j<2;j++){
-// 					if(this.map[(x+i)+","+(y+j)]==="."){
-// 						c++;
-// 					}
-// 				}
-// 			}
-// 			if(c < 1){
-// 				this.display.draw(x,y," ");
-// 				continue;
-// 			}
-// 		}
-// 		if(this.map[key] === "#"){
-// 			this.display.draw(x, y, this.map[key], "#bbb");
-// 		}
-// 		else if(this.map[key] === "⚞"){
-// 			this.display.draw(x,y,this.map[key], "#f84");
-// 		}
-// 		else
-// 		{
-// 			this.display.draw(x, y, this.map[key], "#fff");
-// 		}
-
-// 	}
-// }
-// Game._generateObstructions = function(freeCells){
-// 	// for(var i=0; i<10;i++){
-// 	// 	var index = Math.floor(ROT.RNG.getUniform() * freeCells.length);
-// 	// 	var key = freeCells.splice(index, 1)[0];
-// 	// 	this.map[key] = "*"; //change some representations to a box?
-// 	// }
-
-// 	var index = Math.floor(ROT.RNG.getUniform() * freeCells.length);
-// 	var key = freeCells.splice(index, 1)[0];
-// 	this.map[key] = "⚞";
-
-// }
 Game._createPlayer = function(freeCells) {
 	var index = Math.floor(ROT.RNG.getUniform() * freeCells.length);
 	var key = freeCells.splice(index, 1)[0];
@@ -257,76 +92,6 @@ Game._createPlayer = function(freeCells) {
 	var y = parseInt(parts[1]);
 	this.player = new Player("save",x,y,false);
 }
-// Game._placePlayer = function(freeCells){
-// 	var index = Math.floor(ROT.RNG.getUniform() * freeCells.length);
-// 	var key = freeCells.splice(index,1)[0];
-// 	var parts = key.split(",");
-// 	var x = parseInt(parts[0]);
-// 	var y = parseInt(parts[1]);
-// 	//DEBUG: manually bang player properties
-// 	this.player._x = x;
-// 	this.player._y = y;
-// 	this.player._draw();
-// }
-// Game._debugAddMonster = function(actr, freeCells, playerRef){
-// 	var index = Math.floor(ROT.RNG.getUniform() * freeCells.length);
-// 	var key = freeCells.splice(index, 1)[0];
-// 	var parts = key.split(",");
-// 	var x = parseInt(parts[0]);
-// 	var y = parseInt(parts[1]);
-// 	var name = "debug";
-// 	return new actr(name, x, y, null, playerRef);
-// }
-// Game._generateRandomMonsters = function(actr, freeCells, playerRef){
-// 	var num = Math.floor(ROT.RNG.getUniform() * 10);
-// 	for(var i=0; i<num; i++){
-// 		var index = Math.floor(ROT.RNG.getUniform() * freeCells.length);
-// 		var key = freeCells.splice(index,1)[0];
-// 		var parts = key.split(",");
-// 		var x = parseInt(parts[0]);
-// 		var y = parseInt(parts[1]);
-// 		var types = {
-// 			"goblinoid": 5,
-// 			"rat swarm": 3,
-// 			"orc": 2,
-// 			"rainbowliz":1
-// 		}
-// 		var name = ROT.RNG.getWeightedValue(types);
-// 		var monster = new actr(name, x, y, null, playerRef);
-// 		this.monstersAlive.push(monster);
-// 	}
-// }
-// Game._drawAllEntities = function(){
-// 	//this function redraws all the current active entities on the map
-// 	//this includes the Player, all Enemies, and all Corpses
-// 	//in the future, it will extend to NPCs, Monuments, and other map objects
-
-// 	//intended use is for after closing of any menuing system
-// 	this.player._draw();
-
-// 	this.monstersAlive.forEach(function(value){
-// 		value._draw();
-// 	});
-
-// 	this.corpses.forEach(function(value){
-// 		value._drawCorpse();
-// 	});
-// }
-
-//!!!! DEPRECATED: Moved to Actor.js!!!!
-
-// class Actor{
-// 	constructor(name,x,y){
-// 		this.name = name;
-// 		this._x = x;
-// 		this._y = y;
-// 	}
-
-// 	move(nx,ny){
-// 		this._x = nx;
-// 		this._y = ny;
-// 	}
-// }
 
 class Player extends Actor{
 	constructor(name,x,y,fromSave){
@@ -346,8 +111,6 @@ class Player extends Actor{
 		this.equipment = new Equipment(this);
 		
 		//DEBUG DEBUG DEBUG
-		//need to generate a debug weapon
-		//console.log(Game.itemDefs);
 		var strng = Game.itemDefs.weapons["stick"];
 		var spl = strng.split("/");
 		var stats = spl[5].split(",");
@@ -363,16 +126,11 @@ class Player extends Actor{
 			strng = Game.itemDefs.potions["inferior potion"];
 			var spla = strng.split("/");
 			var item = new Consumable(spla[0],spla[2],spla[3],{"HP": spla[5]});
-			//console.log(item);
 			this.inventory.addItem(item);
 		}
 
 
 		this.equipment.debugEquip("weap", weap);
-		//this.equipment.debugEquip = ("arm", [aaaarmor]);
-		//DEBUG DEBUG DEBUG
-				//console.log(this);
-		
 		//handlers for menus
 		this.inInventoryMenu = false;
 		this.inInspectMenu = false;
@@ -450,7 +208,7 @@ class Player extends Actor{
 
 	modifyStats(effects){
 		for(var property in effects){
-			if(property === "HP"){ //HEALTH WORKS!!!!
+			if(property === "HP"){
 				this.HP += parseInt(effects[property]);
 				var hpHealed = parseInt(effects[property]);
 				if(this.HP > this.MAXHP){
@@ -602,8 +360,6 @@ class Player extends Actor{
 		if(this.inInventoryMenu === true){
 			Game.map._drawWholeMap();
 			var ret = Game.ui.menuHandler(code);
-			//console.log("ret:" + ret);
-			//console.log(ret);
 			if (ret === -1){
 				this.inInventoryMenu = false;
 				Game.map._drawWholeMap();
@@ -611,16 +367,11 @@ class Player extends Actor{
 				return;
 			}
 			else if(ret > 0){
-				//console.log("hey");
 				ret -= 1; //account for manual offset from menuHandler
 				this.inInspectMenu = true;
-				//console.log(this.inventory.contents);
-				//console.log("ret: " + ret);
 				this.inspectItem = this.inventory.contents[ret];
-				//console.log(this.inspectItem);
 				Game.map._drawWholeMap();
 				Game.ui.insMenu((Game.display._options.width / 2) - 10, 4, 20, 12,this.inspectItem,false); //loot is false here
-				//Game.ui.ins
 				return;
 			}
 			else{
@@ -761,434 +512,6 @@ class Player extends Actor{
 
 
 }
-
-
-//!!!!DEPRECATED: Moved to Enemy.js!!!!
-
-// //Enemy actor - contains methods for attacking/seeking players, dispensing loot, etc
-// class Enemy extends Actor{
-// 	constructor(name,x,y,fileLoc, playerRef){
-// 		super(name,x,y);
-		
-// 		this.target = playerRef;  //set reference to player
-// 		//loadStatsFromFileLoc(fileLoc);
-
-// 		//generate loot
-
-// 		this.isDead = false;
-// 		this.onFloor = Game.floor;
-// 		//DEBUG GEN STATS
-// 		if(this.name === "orc"){
-// 			this.STR = 5 + Math.floor(ROT.RNG.getUniform()*2);
-// 			this.DEX = 2 + Math.floor(ROT.RNG.getUniform()*3);
-// 			this.CON = 3 + Math.floor(ROT.RNG.getUniform()*2);
-// 			this.INT = 1;
-// 			this.WIS = 1;
-
-// 			this.HP = 5 + Math.floor(this.CON / 2);
-// 			this.XP = 5;
-// 		}
-// 		else if(this.name === "goblinoid"){
-// 			this.STR = 2 + Math.floor(ROT.RNG.getUniform()*2);
-// 			this.DEX = 5 + Math.floor(ROT.RNG.getUniform()*2);
-// 			this.CON = 1;
-// 			this.INT  = 1;
-// 			this.WIS = 3 + Math.floor(ROT.RNG.getUniform()*3);
-
-// 			this.HP = 2 + this.CON;
-// 			this.XP = 3;
-// 		}
-// 		else if(this.name === "rat swarm"){
-// 			this.STR = 4 + Math.floor(ROT.RNG.getUniform()*2);
-// 			this.DEX = 3 + Math.floor(ROT.RNG.getUniform()*2);
-// 			this.CON = 5 + Math.floor(ROT.RNG.getUniform()*3);
-// 			this.INT = 1;
-// 			this.WIS = 1;
-
-// 			this.HP = 7 + Math.floor(this.CON / 2);
-// 			this.XP = 7;
-// 		}
-// 		else{
-// 			this.STR = 6;
-// 			this.DEX = 5 + Math.floor(ROT.RNG.getUniform()*2);
-// 			this.CON = 10;
-// 			this.INT = 1;
-// 			this.WIS = 3;
-
-// 			this.HP = 20;
-// 			this.XP = 15;
-// 		}
-
-
-// 		this.BAL = 1;
-// 		this.HIT = Math.floor(this.DEX / 2);
-// 		this.EVA = Math.floor(this.DEX / 2);
-// 		this.ATK = Math.floor(this.STR / 2);
-// 		this.MTK = Math.floor(this.INT / 2);
-// 		this.DEF = Math.floor(this.CON / 10);
-// 		this.MDEF = Math.floor(this.WIS/10);
-		
-// 		//this.HP = Math.floor(5 + this.CON / (1.2));
-// 		this.MP = Math.floor(this.INT * this.WIS * 4);
-// 		this.HEAL = Math.floor(this.WIS/2);
-
-// 		this.scaleEnemy(Game.floor);
-// 		this.generateLoot();
-// 		//console.log(this);
-// 		this._draw();
-// 	}
-
-// 	scaleEnemy(floor){
-
-// 		if(floor > 1){
-// 			for(var i=0; i<floor; i++){
-// 				this.STR += Math.floor(ROT.RNG.getUniform() * 5);
-// 				this.DEX += Math.floor(ROT.RNG.getUniform() * 5);
-// 				this.CON += Math.floor(ROT.RNG.getUniform() * 5);
-// 				this.INT += Math.floor(ROT.RNG.getUniform() * 5);
-// 				this.WIS += Math.floor(ROT.RNG.getUniform() * 5);
-
-// 				this.HP += Math.floor(this.CON / 2);
-// 				this.XP += Math.floor(ROT.RNG.getUniform()*6);
-// 			}
-// 		}
-// 		this.BAL = 1;
-// 		this.HIT = Math.floor(this.DEX / 2);
-// 		this.EVA = Math.floor(this.DEX / 2);
-// 		this.ATK = Math.floor(this.STR / 2);
-// 		this.MTK = Math.floor(this.INT / 2);
-// 		this.DEF = Math.floor(this.CON / 10);
-// 		this.MDEF = Math.floor(this.WIS/10);
-
-// 		if(floor < 6){
-// 			this.lootTable = 1;
-// 		}
-// 		else if(floor < 11){
-// 			this.lootTable = 2
-// 		}
-// 		else if(floor < 16){
-// 			this.lootTable = 3;
-// 		}
-// 		else if(floor < 25){
-// 			this.lootTable = 4;
-// 		}
-// 		else{
-// 			this.lootTable = 5;
-// 		}
-
-
-// 	}
-
-// 	generateLoot(){
-// 		this.inventory = new Inventory(this.STR, this);
-// 		this.numItems = Math.floor(ROT.RNG.getUniform() * 2);
-// 		this.genWeapon = false;
-
-// 		if(ROT.RNG.getUniform()  > 0.80){
-// 			this.genWeapon = true;
-// 		}
-// 		var rItems ={};
-// 		if(this.genWeapon === true){
-
-// 			if(this.lootTable === 1){
-// 				rItems = {
-// 					"club": 1
-// 				}
-// 			}
-// 			else if(this.lootTable === 2){
-// 				rItems = {
-// 					"club": 1,
-// 					"shillelagh":1
-// 				}
-// 			}
-// 			else if(this.lootTable === 3){
-// 				rItems = {
-// 					"club": 1,
-// 					"shillelagh":3,
-// 					"short sword":6,
-// 					"long sword":2
-// 				}
-// 			}
-// 			else if(this.lootTable === 4){
-// 				rItems = {
-// 					"shillelagh":1,
-// 					"short sword":3,
-// 					"long sword":6,
-// 					"flail":2
-// 				}
-// 			}
-// 			else{
-// 				rItems = {
-// 					"flail":1,
-// 					"bastard sword":1
-// 				}
-// 			}
-
-// 			//console.log(rItems);
-// 			var rand = ROT.RNG.getWeightedValue(rItems);
-// 			//console.log(rand);
-// 			var strng = Game.itemDefs.weapons[rand];
-// 			var spla = strng.split("/");
-// 			var statsa = spla[5].split(",");
-// 			var item = new Weapon(spla[0],spla[2],spla[3],statsa[0],statsa[1]);
-// 			this.inventory.addItem(item);
-// 		}
-
-
-
-// 		if(this.lootTable === 1){
-// 			rItems = {
-// 				"inferior potion":3,
-// 				"lesser potion":1
-// 			}
-// 		}
-// 		else if(this.lootTable === 2){
-// 			rItems = {
-// 				"inferior potion":1,
-// 				"lesser potion":3,
-// 				"potion":1
-// 			}
-// 		}
-// 		else if(this.lootTable === 3){
-// 			rItems = {
-// 				"lesser potion": 1,
-// 				"potion":4
-// 			}
-// 		}
-// 		else if(this.lootTable === 4){
-// 			rItems = {
-// 				"potion": 4,
-// 				"superior potion":1
-// 			}
-// 		}
-// 		else{
-// 			rItems = {
-// 				"superior potion":1
-// 			}
-// 		}
-
-
-
-// 		for(var i=0; i < this.numItems; i++){
-// 			//DEBUG, roll a random item
-// 			var rand = ROT.RNG.getWeightedValue(rItems);
-// 			strng = Game.itemDefs.potions[rand];
-// 			var spla = strng.split("/");
-// 			var item = new Consumable(spla[0],spla[2],spla[3],{"HP": spla[5]});
-// 			this.inventory.addItem(item);
-// 		}
-// 	}
-
-// 	_draw(){
-// 		Game.display.draw(this._x, this._y, "M", "red");
-// 	}
-
-// 	_drawCorpse(){
-// 		Game.display.draw(this._x, this._y, "X", "#8f0");
-// 	}
-
-// 	act(){
-// 		//TODO: add pathfinding, AI, etc.
-// 		//console.log("inside of enemy act");
-// 		Game.engine.lock();
-// 		var x = this.target.getX();
-// 		var y = this.target.getY();
-
-
-// 		var passableCallback = function(x,y){
-// 			// this.x = x; //some garbage work around stuff
-// 			// this.y = y; 
-// 			// if(!(Game.monstersAlive.every(function(value){
-// 			// 	if(this.x === value._x && this.y === value._y){
-// 			// 		return false;
-// 			// 	}
-// 			// 	else{
-// 			// 		return true;
-// 			// 	}
-// 			// }.bind(this)))){
-// 			// 	return false;
-// 			// }
-// 			return(Game.map[x+","+y] !== "#" && Game.map[x+","+y] !== " ");
-// 		}
-// 		//console.log("game map:");
-// 		//console.log(Game.map);
-
-// 		var astar = new ROT.Path.AStar(x, y, passableCallback, {topology: 4});
-// 		var path = [];
-// 		var pathCallback = function(x,y){
-// 			path.push([x,y]);
-// 		}
-// 		astar.compute(this._x, this._y, pathCallback);
-
-// 		path.shift(); //removes enemy's current position
-// 		//console.log("path length: " + path.length);
-// 		//var d = dist(this._x,this._y,x,y);
-// 		if(path.length <= 1){
-// 			this.fight();
-// 		}
-// 		else if(path.length < 7){ //this value needs tweaked
-// 			//console.log("path: " + path);
-// 			x = path[0][0];
-// 			y = path[0][1];
-// 			Game.display.draw(this._x, this._y, Game.map[this._x+","+this._y]);
-// 			this._x  = x;
-// 			this._y = y;
-// 			this._draw();
-// 		}
-// 		//else, just stall
-// 		Game.engine.unlock();
-// 	}
-
-// 	//ACTIONS
-// 	fight(){
-// 		//general fighting action
-// 		var dmgOutput = parseInt(this.ATK + 3); // FOR LATER: this.equipment.weapon.ATK;
-// 		//console.log("enemy fighting");
-// 		//console.log(this);
-// 		this.target.takeDamage(dmgOutput,"PHYS",this.name);
-// 	}
-
-// 	takeDamage(dmginput,type){
-// 		//console.log("enemy take damage");
-// 		var dmgtaken = 0;
-// 		var msg = "";
-// 		if(type === "PHYS"){
-// 			dmgtaken = Math.floor(dmginput - (dmginput * (this.DEF/100)));
-// 			if(dmgtaken < 1){
-// 				dmgtaken = 1;
-// 			}
-// 			msg = this.name +  " takes " + dmgtaken + " damage from "  + this.target.name;
-// 		}
-// 		else{
-// 			dmgtaken =Math.floor(dmginput - (dmginput * (this.MDEF/100)));
-// 			if(dmgtaken < 1){
-// 				dmgtaken = 1;
-// 			}
-// 			msg = this.name +  "vtakes " + dmgtaken + " magic damage from "  + this.target.name;
-// 		}
-// 		//TODO:
-// 		this.HP -= dmgtaken;
-// 		Game.ui.updateClog(msg,"white");
-// 		if(this.HP < 1){
-// 			this.doDeath();
-// 		}
-// 	}
-
-// 	doDeath(){
-// 		Game.scheduler.remove(this);
-// 		var ind = Game.monstersAlive.indexOf(this);
-// 		this.awardXP(this.XP);
-// 		//console.log(this.target);
-// 		if(ind > -1){
-// 			Game.monstersAlive.splice(ind,1); //toss the enemy out of the monstersAlive array.
-// 			Game.corpses.push(new Corpse(this._name, this._x, this._y, this.inventory));
-// 		}
-// 		else{
-// 			//console.log("error checking inded!")
-// 		}
-// 		this._drawCorpse();
-		
-// 	}
-
-// 	//This function calls a player public function to add XP
-// 	//that function checks current XP at level and does level up
-// 	awardXP(xp){
-// 		this.target.gainXP(xp);
-// 	}
-
-
-// 	//This checks monster's current location to see if it can drop a box
-// 	//that contains the monster's generated loot
-// 	//if that doesn't work, it searches for the nearest square to drop it.
-// 	dropLoot(){
-// 		//if(checkMapSquare()) is clear
-// 		//	generateTreasureContainer(this._x,this._y,this.monsterLoot[])
-// 		//else
-// 		//	key = findNearestSquare(this._x, this._y);
-// 		//	coords = key.split(',');
-// 		//	nx = coords[0];
-// 		//	ny = coords[1];
-// 		//	generateTreasureContainer(nx, ny, this.monsterLoot[]);
-		
-// 	}
-// }
-
-// class Corpse {
-// 	constructor(name, x, y, inventory){
-// 		this._name = name;
-// 		this._x = x;
-// 		this._y = y;
-// 		this.loot = inventory;
-
-// 		this._drawCorpse;
-// 	}
-
-// 	removeCorpse(){
-// 		delete this._name;
-// 		delete this._x;
-// 		delete this._y;
-// 		delete this.loot;
-
-// 		delete this;
-// 	}
-
-
-// 	_drawCorpse(){
-// 		Game.display.draw(this._x, this._y, "X", "#8f0");
-// 	}
-// }
-
-
-// class Item {
-// 	constructor(name,weight,value){
-// 		this._name = name;
-// 		this._weight = weight;
-// 		this._value = value;
-// 	}
-// }
-
-// class Weapon extends Item {
-// 	constructor(name,weight,value,atk,bal){
-// 		super(name,weight,value);
-// 		this.atk = atk;
-// 		this.bal = bal;
-// 	}
-// }
-
-// class Consumable extends Item {
-// 	constructor(name,weight,value, effects){
-// 		super(name,weight,value);
-// 		this.effects = effects;
-// 	}
-// }
-
-
-// class Consumable extends Item {
-// 	constructor(name,weight,value, targetType, target, effects){
-// 		super(name,weight,value);
-// 		this.targetType = targetType;
-// 		this.targetRef = target;
-// 		this.effects = effects;
-// 	}
-
-// 	use(){
-// 		this.targetRef.modifyStats(effects);
-// 	}
-// }
-
-// class Food extends Item {
-// 	constructor(name,weight,value, targetType, target, effects, time,){
-// 		super(name,weight,value,targetType,target,effects);
-// 		this.expiryTime = time;
-// 	}
-	
-	//use(){
-	//	super();
-		//schedule_some_timer(expiryTime);
-		//remove_item_from_inventory(target);
-	//}
-//}
-
 
 class ItemDefinitions{
 	constructor(r){
@@ -1564,7 +887,6 @@ class UI {
 							target.modifyStats(this.insmenuItem.effects); //apply effects
 							target.inventory.removeItem(this.insmenuItem); //make sure to actually consume it!
 							Game.map._drawWholeMap();
-							//console.log(target);
 							return 1;
 						}
 					}
@@ -1579,7 +901,6 @@ class UI {
 			}
 		}
 		else{
-			//console.log("inside of nonLootMenu");
 			if(keyPress === 32 || keyPress === 13){
 				if(this.insmenuCursor === 0){
 					target.inventory.addItem(this.insmenuItem);
@@ -1715,7 +1036,6 @@ class UI {
 			}
 		}
 		else{
-			//console.log("inside of consumable menu");
 			var heal = item.effects.HP;
 			var name = item._name;
 			var use = "USE";
@@ -1834,9 +1154,6 @@ class UI {
 		for(i=0;i<cWidth/2 - 2;i++){
 			str += "-";
 		}
-		// for(i=0;i<width-2;i++){
-		// 	str += "-";
-		// }
 		str += "\\";
 		var sLength = height;
 		var start = page * sLength; //page 0 = 0, page 1 = 10, page 2 = 20, etc
@@ -1871,8 +1188,6 @@ class UI {
 				str += "%b{blue}%c{}";
 			}
 			str += "|" + bc + "| ";
-			//str += "|";
-			//console.log(str);
 			h++;
 			if(h>=height){
 				return;
@@ -1889,7 +1204,6 @@ class UI {
 
 
 	insMenu(x,y,width,height, item, loot){
-		//console.log("in menu");
 		this.insmenuX = x;
 		this.insmenuY = y;
 		this.insmenuWidth = width;
@@ -1897,8 +1211,6 @@ class UI {
 		this.insmenuCursor = 0;
 		this.insmenuItem = item;
 		this.insLoot = loot;
-		//console.log(item);
-		//console.log(this.insmenuItem);
 		this.reDrawInsMenu(this.insmenuX, this.insmenuY, this.insmenuWidth, this.insmenuHeight, "INSPECT", this.insmenuCursor, this.insmenuItem, this.insLoot);
 	}
 
