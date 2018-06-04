@@ -6,13 +6,18 @@ import Equipment from "./containers/equipment.js";
 import Weapon from "../items/weapon.js";
 import Consumable from "../items/consumable.js";
 
+//utilities
+import Logger from "../utils/loggy.js";
+
 //player object layout:
 //STATS: object contains all stats related to the player <== this should be broken into a stat block object somewhere
 //this will be extended later to hold a SKILLS object
 
 export default class Player extends Actor{
-	constructor(name,x,y,isLoadingFromSave, gameObjectReference){
+	constructor(name,x,y,isLoadingFromSave, gameObjectReference, isDebuggingEnabled = false){
 		super(name,x,y);
+		
+		this.Logger = new Logger(this, isDebuggingEnabled);
 
 		//set handle so that main game loop, enemies, containers, etc. can target player, and vice-versa
 		this.gameObjectReference = gameObjectReference;
@@ -51,7 +56,6 @@ export default class Player extends Actor{
 			strng = this.gameObjectReference.itemDefs.potions["inferior potion"];
 			var spla = strng.split("/");
 			var item = new Consumable(spla[0],spla[2],spla[3],{"HP": spla[5]});
-			//console.log(item);
 			this.inventory.addItem(item);
 		}
 		this.equipment.debugEquip("weap", weap);
@@ -394,17 +398,12 @@ export default class Player extends Actor{
 
 	//Combat functions
 	fight(target){
-		//console.log("wp attack: " + this.equipment.weapon.atk);
-		//console.log("regular atk: " + this.Attack);
 		var dmgOutput = parseInt(this.Attack) + parseInt(this.equipment.weapon.atk); // FOR LATER: this.equipment.weapon.ATK;
-		//console.log("player fighting" + dmgOutput);
 		target.takeDamage(dmgOutput,"PHYS");
-		//console.log(target);
 	}
 
 
 	takeDamage(dmginput,type,enemyName){
-		//console.log("taking damage");
 		var dmgtaken = 0;
 		var msg = "";
 		if(type === "PHYS"){
@@ -427,7 +426,6 @@ export default class Player extends Actor{
 		if(this.HP < 1){
 			this.doDeath();
 		}
-		//console.log("Player HP:" + this.HP);
 	}
 
 	doDeath(){
